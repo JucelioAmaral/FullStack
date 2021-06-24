@@ -1,5 +1,5 @@
 
-# Curso completo FullStack
+# Projeto FullStack
 
 Api feita em .Net SDK 5.0.202, usando Entity framework para persistencia e acesso ao banco de dados,
 Swagger para documentação da Api, SQLServer como SGBD.
@@ -16,7 +16,7 @@ Front-End utilizando Angular 12.
 
 git clone https://github.com/JucelioAmaral/FullStack.git
 
-## Como configurar a api(back)?
+## Como configurar a api(Back)?
 
 1. Abrir a Visual Code;
 2. Configurar o arquivo "appsettings.Development.json" com a connectionString, apontando para o banco SQL server;
@@ -25,7 +25,7 @@ git clone https://github.com/JucelioAmaral/FullStack.git
 5. Executar o comando: "dotnet ef database update";
 6. Executar a API pelo Visual Code usando o comando: dotnet watch run;
 
-**API roda na porta https://localhost:5001/swagger/index.html**
+**API roda na porta 5001 e pode ser testada pelo link: https://localhost:5001/swagger/index.html**
 
 ## Como executar o app (Front)?
 
