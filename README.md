@@ -20,10 +20,11 @@ git clone https://github.com/JucelioAmaral/FullStack.git
 
 1. Abrir a Visual Code;
 2. Configurar o arquivo "appsettings.Development.json" com a connectionString, apontando para o banco SQL server;
-3. Abrir o Console/Terminal do Visual Code e entrar no diretório da api;
-4. Executar o comando: "dotnet ef migrations Add Initial -o Data/Migrations";
-5. Executar o comando: "dotnet ef database update";
-6. Executar a API pelo Visual Code usando o comando: dotnet watch run;
+3. Instalar o pacote do sql server: "Install-Package Microsoft.EntityFrameworkCore.SqlServer" (ou no NuGet Gallery: (ctrl+shift+p) e instalar o pacote "Microsoft.EntityFrameworkCore.SqlServer" no "ProEventos.Persistence.csproj")
+4. Abrir o Console/Terminal do Visual Code e entrar no diretório da api(...\Back\src);
+5. Executar o comando: "dotnet ef migrations add Initial -p ProEventos.Persistence -s ProEventos.Api";
+6. Executar o comando: "dotnet ef database update -s ProEventos.Api";
+7. Executar a API pelo Visual Code usando o comando: dotnet watch run;
 
 **API roda na porta 5001 e pode ser testada pelo link: https://localhost:5001/swagger/index.html**
 
