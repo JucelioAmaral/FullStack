@@ -16,7 +16,7 @@ Front-End utilizando Angular 12.
 
 git clone https://github.com/JucelioAmaral/FullStack.git
 
-## Como configurar a api(Back)?
+## Como configurar a api(Back end)?
 
 1. Abrir a Visual Code;
 2. Configurar o arquivo "appsettings.Development.json" com a connectionString, apontando para o banco SQL server;
@@ -28,7 +28,7 @@ git clone https://github.com/JucelioAmaral/FullStack.git
 
 **API roda na porta 5001 e pode ser testada pelo link: https://localhost:5001/swagger/index.html**
 
-## Como executar o app (Front)?
+## Como executar o app (Front end)?
 
 1. Abrir o Console/Terminal do Visual Code e entrar no diretório do app;
 2. Instalar o Angular versão mais nova usando o comando: npm install -g @angular/cli;
