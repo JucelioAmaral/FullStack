@@ -9,6 +9,7 @@ import { PalestrantesComponent } from './palestrantes/palestrantes.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NavComponent } from './nav/nav.component';
 import { CollapseModule } from 'ngx-bootstrap/collapse';
+import { EventoService } from './services/evento.service';
 
 @NgModule({
   declarations: [
@@ -25,7 +26,7 @@ import { CollapseModule } from 'ngx-bootstrap/collapse';
     CollapseModule.forRoot(),
     FormsModule
   ],
-  providers: [],
+  providers: [EventoService],// É injetada nesse aquivo (app.module.ts) porque é onde estão os componentes e, pode ser visto a relação componente - Injeção de Dependencia no arquivo "eventos.component.ts", na linha 36.
   bootstrap: [AppComponent]
 })
 export class AppModule { }
