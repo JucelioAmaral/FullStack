@@ -1,12 +1,29 @@
-<app-titulo [titulo]="'Eventos'"></app-titulo>
-<div class="form-inline">
-  <div class="form-group mb-2">
-    <label class="mr-2">Filtro:</label>
-   <input type="text"
-    class="form-control mr-2"
-    placeholder="buscar"
-    [(ngModel)]="filtroLista"
-    >
+
+
+<app-titulo [titulo]="'Eventos'"
+            [iconClass]="'fa fa-calendar-alt'"
+            [botaoListar]="true"></app-titulo>
+<div class="card rounded shadow-sm p-3">
+
+<div class="d-flex">
+  <div class="flex-fill pr-3">
+    <div class="input-group mb-2">
+      <div class="input-group-prepend">
+        <div class="input-group-text">Filtro:</div>
+      </div>
+     <input
+      type="text"
+      class="form-control"
+      placeholder="Filtrar por Tema e Local"
+      [(ngModel)]="filtroLista"
+      >
+    </div>
+  </div>
+    <div>
+      <a class="d-flex btn btn-outline-primary" href="#">
+        <i class="fa fa-plus-circle my-1"></i>
+        <b class="ml-1 d-none d-sm-block">Novo</b>
+      </a>
   </div>
 </div>
 <!-- <h3>Filtro:{{filtroLista}}</h3> -->
@@ -69,7 +86,7 @@
 
 <!-- Para decobrir como os resultados vem pelo json, use/descomente a linha abaixo -->
 <!-- {{eventos| json}} -->
-
+</div>
 <ng-template #template>
   <div class="modal-body text-center">
     <p>Deseja deletar este evento?</p>
