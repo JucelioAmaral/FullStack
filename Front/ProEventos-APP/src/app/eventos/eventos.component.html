@@ -48,11 +48,11 @@
       <td>{{evento.lotes[0].nome | uppercase}}</td>
       <!-- <td>{{evento.lotes}}</td> -->
       <td>
-        <button type="button" class="btn btn-primary btn-sm mr-2">
+        <button type="button" class="btn btn-primary btn-sm mr-2" tooltip = "Editar">
           <i class="fa fa-edit"></i>
           Editar
         </button>
-        <button type="button" class="btn btn-danger btn-sm">
+        <button type="button" class="btn btn-danger btn-sm" tooltip = "Excluir" (click)="openModal(template)">
           <i class="fa fa-trash"></i>
           Excluir
         </button>
@@ -71,3 +71,10 @@
 <!-- Para decobrir como os resultados vem pelo json, use/descomente a linha abaixo -->
 <!-- {{eventos| json}} -->
 
+<ng-template #template>
+  <div class="modal-body text-center">
+    <p>Deseja deletar este evento?</p>
+    <button type="button" class="btn btn-default" (click)="confirm()" >Sim</button>
+    <button type="button" class="btn btn-primary" (click)="decline()" >Não</button>
+  </div>
+</ng-template>
