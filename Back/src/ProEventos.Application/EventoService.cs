@@ -1,4 +1,6 @@
+using AutoMapper;
 using ProEventos.Application.Contratos;
+using ProEventos.Application.Dtos;
 using ProEventos.Domain;
 using ProEventos.Persistence.Contratos;
 using System;
@@ -11,21 +13,28 @@ namespace ProEventos.Application
     {
         private readonly IGeralPersist _geralPersist;
         private readonly IEventoPersist _eventoPersist;
+        private readonly IMapper _mapper;
 
-        public EventoService(IGeralPersist geralPersist, IEventoPersist eventoPersist)
+        public EventoService(IGeralPersist geralPersist,
+                             IEventoPersist eventoPersist,
+                             IMapper mapper)
         {
             _geralPersist = geralPersist;
             _eventoPersist = eventoPersist;
+            _mapper = mapper;
         }
 
-        public async Task<Evento> AddEventos(Evento model)
+        public async Task<EventoDto> AddEventos(EventoDto model)
         {
             try
-            {
-                _geralPersist.Add<Evento>(model);
+            {               
+                var evento = _mapper.Map<Evento>(model);//LE-SE: Vai pegar o "model" que é um "Dto", vai mapear ele para um "Evento" e atribuir a variável "var evento".
+                _geralPersist.Add<Evento>(evento);
                 if (await _geralPersist.SaveChangesAsync())
                 {
-                    return await _eventoPersist.GetEventoByIdAsync(model.Id, false);
+                    var eventoRetorno = await _eventoPersist.GetEventoByIdAsync(evento.Id, false);
+                    //Faz o mapeamento ao contrário, adicionando o ".ReverseMap()" em ProEventosProfile, fazendo o invérso.
+                    return _mapper.Map<EventoDto>(eventoRetorno);// LE-SE: Mapeado o evento de retorno para o meu Dto.
                 }
                 return null;
             }
@@ -34,19 +43,21 @@ namespace ProEventos.Application
                 throw new Exception(ex.Message);
             }
         }
-        public async Task<Evento> UpdateEventos(int eventoId, Evento model)
+        public async Task<EventoDto> UpdateEventos(int eventoId, EventoDto model)
         {
             try
             {
                 var evento = await _eventoPersist.GetEventoByIdAsync(eventoId, false);
                 if (evento == null) return null;
 
-                model.Id = evento.Id;
-
-                _geralPersist.Update(model);
+                model.Id = evento.Id;                
+                _mapper.Map(model, evento);//Dto será mapeado para Evento.
+                _geralPersist.Update<Evento>(evento);// ...e o Update recebe um objeto do tipo Evento.
                 if (await _geralPersist.SaveChangesAsync())
                 {
-                    return await _eventoPersist.GetEventoByIdAsync(model.Id, false);
+                    var eventoRetorno = await _eventoPersist.GetEventoByIdAsync(evento.Id, false);
+                    //Faz o mapeamento ao contrário, adicionando o ".ReverseMap()" em ProEventosProfile, fazendo o invérso.
+                    return _mapper.Map<EventoDto>(eventoRetorno);// LE-SE: Mapeado o evento de retorno para o meu Dto.
                 }
                 return null;
             }
@@ -72,14 +83,18 @@ namespace ProEventos.Application
             }
         }
 
-        public async Task<Evento[]> GetAllEventosAsync(bool includePalestrante = false)
+        public async Task<EventoDto[]> GetAllEventosAsync(bool includePalestrante = false)
         {
             try
             {
                 var eventos = await _eventoPersist.GetAllEventosAsync(includePalestrante);
                 if (eventos == null) return null;
 
-                return eventos;
+                //LE-SE: Eu quero mapear meu "evento" (var evento acima), dado meu objeto "EventoDto"
+                //LE-SE TBM: Dado meu objeto "EventoDto" vou mapear meu "evento" (var "evento" acima), que é o retorno do meu repositório e atribuir ao "resultado" para retornar.
+                var resultado = _mapper.Map<EventoDto[]>(eventos);
+
+                return resultado;
             }
             catch (Exception ex)
             {
@@ -87,14 +102,18 @@ namespace ProEventos.Application
             }
         }
 
-        public async Task<Evento[]> GetAllEventosByTemaAsync(string tema, bool includePalestrante = false)
+        public async Task<EventoDto[]> GetAllEventosByTemaAsync(string tema, bool includePalestrante = false)
         {
             try
             {
                 var eventos = await _eventoPersist.GetAllEventosByTemaAsync(tema, includePalestrante);
                 if (eventos == null) return null;
 
-                return eventos;
+                //LE-SE: Eu quero mapear meu "evento" (var evento acima), dado meu objeto "EventoDto"
+                //LE-SE TBM: Dado meu objeto "EventoDto" vou mapear meu "evento" (var "evento" acima), que é o retorno do meu repositório e atribuir ao "resultado" para retornar.
+                var resultado = _mapper.Map<EventoDto[]>(eventos);
+
+                return resultado;
             }
             catch (Exception ex)
             {
@@ -102,14 +121,18 @@ namespace ProEventos.Application
             }
         }
 
-        public async Task<Evento> GetEventoByIdAsync(int eventoId, bool includePalestrante = false)
+        public async Task<EventoDto> GetEventoByIdAsync(int eventoId, bool includePalestrante = false)
         {
             try
             {
-                var eventos = await _eventoPersist.GetEventoByIdAsync(eventoId, includePalestrante);
-                if (eventos == null) return null;
+                var evento = await _eventoPersist.GetEventoByIdAsync(eventoId, includePalestrante);
+                if (evento == null) return null;
 
-                return eventos;
+                //LE-SE: Eu quero mapear meu "evento" (var evento acima), dado meu objeto "EventoDto"
+                //LE-SE TBM: Dado meu objeto "EventoDto" vou mapear meu "evento" (var "evento" acima), que é o retorno do meu repositório e atribuir ao "resultado" para retornar.
+                var resultado = _mapper.Map<EventoDto>(evento);
+
+                return resultado;
             }
             catch (Exception ex)
             {
