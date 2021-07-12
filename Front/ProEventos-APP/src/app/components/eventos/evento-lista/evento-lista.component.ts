@@ -1,4 +1,5 @@
 import { Component, OnInit, TemplateRef } from '@angular/core';
+import { EventManager } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { NgxSpinnerService } from 'ngx-spinner';
@@ -12,9 +13,12 @@ import { EventoService } from 'src/app/services/evento.service';
   styleUrls: ['./evento-lista.component.scss'],
 })
 export class EventoListaComponent implements OnInit {
+
   modalRef = {} as BsModalRef;
   public eventos: Evento[] = [];
   public eventosFiltrados: Evento[] = [];
+  public eventoId = 0;
+
   public larguraImagem: number = 100;
   public margemImagem: number = 2;
   public exibirImagem: boolean = true;
@@ -77,7 +81,9 @@ export class EventoListaComponent implements OnInit {
       complete: () => this.spinner.hide(),
     });
   }
-  openModal(template: TemplateRef<any>): void {
+  openModal(event: any, template: TemplateRef<any>, eventoId: number): void {
+    event.stopPropagation();
+    this.eventoId = eventoId;
     this.modalRef = this.modalService.show(template, { class: 'modal-sm' });
   }
 

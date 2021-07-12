@@ -19,18 +19,18 @@ namespace ProEventos.Persistence
 
         public async Task<Evento[]> GetAllEventosAsync(bool includePalestrante = false)
         {
-            IQueryable<Evento> query = _context.tblEventos
+            IQueryable<Evento> query = _context.tblEventos //LE-SE: Para cada evento na tabela Evento, inclui os lotes e as redes sociais.
             .Include(e => e.Lotes)
             .Include(e => e.RedesSociais);
 
-            if(includePalestrante)
+            if(includePalestrante)// se "includePalestrante" for verdadeiro, inclui também, na query, o palestranteEvento e inclui o palestrante.
             {
                 query = query
-                .Include(pe => pe.PalestrantesEventos)
+                .Include(pe => pe.PalestrantesEventos)// Include = Inclui. Ou seja, são SELECT's.
                 .ThenInclude(pe => pe.Palestrante);
             }
 
-            query = query.AsNoTracking().OrderBy(e => e.Id);
+            query = query.AsNoTracking().OrderBy(e => e.Id);// Ordenado por Id.
             return await query.ToArrayAsync();
         }
         public async Task<Evento[]> GetAllEventosByTemaAsync(string tema, bool includePalestrante = false)
