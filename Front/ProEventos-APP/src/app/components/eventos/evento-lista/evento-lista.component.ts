@@ -6,7 +6,6 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { ToastrService } from 'ngx-toastr';
 import { Evento } from 'src/app/models/Evento';
 import { EventoService } from 'src/app/services/evento.service';
-
 @Component({
   selector: 'app-evento-lista',
   templateUrl: './evento-lista.component.html',
@@ -89,7 +88,25 @@ export class EventoListaComponent implements OnInit {
 
   confirm(): void {
     this.modalRef.hide();
-    this.toastr.success('Evento deletado com sucesso!', 'Deletado.');
+    this.spinner.show();
+
+    this.eventoService.deleteEvento(this.eventoId).subscribe(
+      (result: any) => {
+        if( result.message == 'Deletado'){
+        console.log(result);
+        this.toastr.success('Evento deletado com sucesso!', 'Deletado.');
+        this.spinner.hide();
+        this.getEventos();
+        }
+      },
+      (error: any) => {
+        console.error(error);
+        this.toastr.error(`Erro ao tentar deletar o evento ${this.eventoId}`, 'Erro.');
+        this.spinner.hide();
+      },
+      () => this.spinner.hide(),
+    );
+
   }
 
   decline(): void {

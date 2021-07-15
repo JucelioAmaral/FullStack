@@ -8,6 +8,7 @@ import { ToastrService } from 'ngx-toastr';
 
 import { EventoService } from '@app/services/evento.service';
 import { Evento } from '@app/models/Evento';
+import { identifierModuleUrl } from '@angular/compiler';
 
 @Component({
   selector: 'app-evento-detalhe',
@@ -18,6 +19,7 @@ export class EventoDetalheComponent implements OnInit {
 
   evento = {} as Evento;
   form!: FormGroup;
+  estadoSalvar = 'post';
 
   get f(): any {
     return this.form.controls;
@@ -46,6 +48,9 @@ public carregarEvento(): void{
   const eventoIdParam = this.router.snapshot.paramMap.get('id');
 
   if (eventoIdParam != null){
+
+    this.estadoSalvar = 'put';
+
     this.spinner.show();
     this.eventoService.getEventoById(+eventoIdParam).subscribe({
       next:(evento: Evento) => {
@@ -85,5 +90,37 @@ public carregarEvento(): void{
 
   public cssValidator(campoForm: FormControl): any{
     return {'is-invalid': campoForm.errors && campoForm.touched };
+  }
+
+  public salvarInsercaoAlteracao(): void{
+    this.spinner.show();
+    if (this.form.valid){
+      if(this.estadoSalvar == 'post'){
+      // O "value" terá todos os valores do objeto evento, que atribuirá ao this.evento. Como se fosse um automapper.
+      this.evento = {...this.form.value}
+        this.eventoService.postEvento(this.evento).subscribe(
+          () => this.toastr.success('Evento salvo com sucesso','Evento salvo!'),
+          (error: any) =>{
+            console.error(error);
+            this.spinner.hide();
+            this.toastr.error('Erro ao salvar o evento','Erro ao salvar.');
+          },
+          () => this.spinner.hide()
+        );
+      } else {
+        // O "value" terá todos os valores do objeto evento, que atribuirá ao this.evento. Como se fosse um automapper.
+      this.evento = {id: this.evento.id, ...this.form.value}
+        this.eventoService.putEvento(this.evento.id, this.evento).subscribe(
+          () => this.toastr.success('Evento alterado com sucesso','Evento alterado!'),
+          (error: any) =>{
+            console.error(error);
+            this.spinner.hide();
+            this.toastr.error('Erro ao salvar o evento','Erro ao salvar.');
+          },
+          () => this.spinner.hide()
+        );
+      }
+
+    }
   }
 }

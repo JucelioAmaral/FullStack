@@ -34,7 +34,7 @@ namespace ProEventos.API
                     .AddNewtonsoftJson(x => x.SerializerSettings.ReferenceLoopHandling =
                     Newtonsoft.Json.ReferenceLoopHandling.Ignore
                     );
-            //LE-SE: Dentro do meu domínio da minha aplicação (AppDomain), no domínio corrente (CurrentDomain), procura para mim que estáerando de "Profile" (na pasta "Helpers")
+            //LE-SE: Dentro do meu domï¿½nio da minha aplicaï¿½ï¿½o (AppDomain), no domï¿½nio corrente (CurrentDomain), procura para mim que estï¿½erando de "Profile" (na pasta "Helpers")
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
             services.AddScoped<IEventosService, EventoService>();
@@ -64,9 +64,9 @@ namespace ProEventos.API
 
             app.UseAuthorization();
 
-            app.UseCors(cors => cors.AllowAnyHeader()
-                                    .AllowAnyHeader()
-                                    .AllowAnyOrigin());
+            app.UseCors(cors => cors.AllowAnyHeader()//LE-SE: Dado qq cabeÃ§alho de requisiÃ§Ã£o do meu http
+                                    .AllowAnyMethod()// vinda de qq mÃ©todo, ou seja, get ,post, put, delete, patch...
+                                    .AllowAnyOrigin());// vinda de qq origem.
 
             app.UseEndpoints(endpoints =>
             {
