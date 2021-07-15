@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace ProEventos.Application.Dtos
 {
-    class LoteDto
+    public class LoteDto
     {
         public int Id { get; set; }
         
@@ -19,6 +19,6 @@ namespace ProEventos.Application.Dtos
         public string DataFim { get; set; }
         public int Quantidade { get; set; }
         public int EventoId { get; set; }
-        public EventoDto Eventos { get; set; }
+        public EventoDto Evento { get; set; }
     }
 }

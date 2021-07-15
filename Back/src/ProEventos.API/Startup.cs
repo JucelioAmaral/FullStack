@@ -37,9 +37,12 @@ namespace ProEventos.API
             //LE-SE: Dentro do meu dom�nio da minha aplica��o (AppDomain), no dom�nio corrente (CurrentDomain), procura para mim que est�erando de "Profile" (na pasta "Helpers")
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
-            services.AddScoped<IEventosService, EventoService>();
+            services.AddScoped<IEventoService, EventoService>();
+            services.AddScoped<ILoteService, LoteService>();
+
             services.AddScoped<IGeralPersist, GeralPersist>();
-            services.AddScoped<IEventoPersist, EventosPersist>();
+            services.AddScoped<IEventoPersist, EventoPersist>();
+            services.AddScoped<ILotePersist, LotePersist>();
 
             services.AddCors();
             services.AddSwaggerGen(c =>
