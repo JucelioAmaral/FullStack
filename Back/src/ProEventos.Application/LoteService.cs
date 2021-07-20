@@ -35,6 +35,7 @@ namespace ProEventos.Application
             try
             {
                 var lote = _mapper.Map<Lote>(model);//LE-SE: Vai pegar o "model" que é um "Dto", vai mapear ele para um "Lote" e atribuir a variável "var lote".
+                lote.EventoId = eventoId;
                 _geralPersist.Add<Lote>(lote);
                 await _geralPersist.SaveChangesAsync();
             }

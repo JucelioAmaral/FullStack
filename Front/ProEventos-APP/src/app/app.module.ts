@@ -27,6 +27,8 @@ import { NavComponent } from './shared/nav/nav.component';
 import { CollapseModule } from 'ngx-bootstrap/collapse';
 
 import { EventoService } from './services/evento.service';
+import { LoteService } from './services/lote.service';
+
 import { DateTimeFormatPipe } from './helpers/DateTimeFormat.pipe';
 import { EventoDetalheComponent } from './components/eventos/evento-detalhe/evento-detalhe.component';
 import { EventoListaComponent } from './components/eventos/evento-lista/evento-lista.component';
@@ -74,7 +76,10 @@ defineLocale('pt-br', ptBrLocale);
     }),
     NgxSpinnerModule
   ],
-  providers: [EventoService],// É injetada nesse aquivo (app.module.ts) porque é onde estão os componentes e, pode ser visto a relação componente - Injeção de Dependencia no arquivo "eventos.component.ts", na linha 36.
+  providers: [
+    EventoService, // É injetada nesse aquivo (app.module.ts) porque é onde estão os componentes e, pode ser visto a relação componente - Injeção de Dependencia no arquivo "eventos.component.ts", na linha 36.
+    LoteService
+  ],
   bootstrap: [AppComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
