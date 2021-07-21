@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, TemplateRef } from '@angular/core';
 import { FormGroup, FormControl, Validators, FormBuilder, FormArray, AbstractControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 
@@ -10,6 +10,8 @@ import { LoteService } from '@app/services/lote.service';
 import { EventoService } from '@app/services/evento.service';
 import { Evento } from '@app/models/Evento';
 import { Lote } from '@app/models/Lote';
+import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
 
 @Component({
   selector: 'app-evento-detalhe',
@@ -17,11 +19,12 @@ import { Lote } from '@app/models/Lote';
   styleUrls: ['./evento-detalhe.component.scss']
 })
 export class EventoDetalheComponent implements OnInit {
-
+  modalRef: BsModalRef;
   eventoId!: number;
   evento = {} as Evento;
   form!: FormGroup;
   estadoSalvar = 'post';
+  loteAtual= {id: 0, nome: '', indice: 0};
 
 get modoEditar(): boolean{
   return this.estadoSalvar =='put';
@@ -50,6 +53,7 @@ constructor(private fb: FormBuilder,
             private eventoService: EventoService,
             private spinner: NgxSpinnerService,
             private toastr: ToastrService,
+            private modalService: BsModalService,
             private router: Router,
             private loteService: LoteService)
 {
@@ -59,7 +63,7 @@ constructor(private fb: FormBuilder,
 public carregarEvento(): void{
   this.eventoId = +this.activatedRouter.snapshot.paramMap.get('id');
 
-  if (this.eventoId != null || this.eventoId == 0){
+  if (this.eventoId != null && this.eventoId != 0){
     this.spinner.show();
 
     this.estadoSalvar = 'put';
@@ -116,6 +120,14 @@ public carregarEvento(): void{
     });
   }
 
+  public mudarValorData(value: Date, indice: number, campo: string): void{
+  this.lotes.value[indice][campo] = value;
+  }
+
+  public retornaTituloLote(nome: string): string{
+    return nome == null || nome == '' ? 'Nome do lote': nome
+  }
+
   public  resetForm(): void{
     this.form.reset();
   }
@@ -161,8 +173,8 @@ public carregarEvento(): void{
   }
 
   public saveLotes(): void{
-      this.spinner.show();
       if(this.form.controls.lotes.valid){
+        this.spinner.show();
         this.loteService.salveLote(this.eventoId, this.form.value.lotes).subscribe(
           () => {
             this.toastr.success('Lotes salvos com sucesso','Sucesso!');
@@ -174,6 +186,35 @@ public carregarEvento(): void{
           },
         ).add(()=> this.spinner.hide());
       }
+  }
 
+  public removerLote(template: TemplateRef<any>,
+                     indice: number): void {
+
+    this.loteAtual.id = this.lotes.get(indice + '.id').value;
+    this.loteAtual.nome = this.lotes.get(indice + '.nome').value;
+    this.loteAtual.indice = indice;
+
+    this.modalRef = this.modalService.show(template, {class: 'modal-sm' });
+  }
+
+  confirmDeleteLote(): void{
+    this.modalService.hide();
+    this.spinner.show();
+
+    this.loteService.deleteLote(this.eventoId, this.loteAtual.id).subscribe(
+      () =>{
+        this.toastr.success('Lote deletado com sucesso','Sucesso!');
+        this.lotes.removeAt(this.loteAtual.indice);
+      },
+      (error: any) =>{
+        this.toastr.error(`Erro ao tentar deleatr o lote ${this.loteAtual.id}`,'Erro!')
+        console.error(error);
+      },
+    ).add(()=> this.spinner.hide());
+  }
+
+  declineDeleteLote(): void{
+    this.modalService.hide();
   }
 }
