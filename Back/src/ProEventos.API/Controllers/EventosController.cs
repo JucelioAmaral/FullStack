@@ -1,10 +1,12 @@
 ﻿using System;
+using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ProEventos.Application.Contratos;
 using ProEventos.Application.Dtos;
-using ProEventos.Domain;
 
 namespace ProEventos.API.Controllers
 {
@@ -13,10 +15,12 @@ namespace ProEventos.API.Controllers
     public class EventosController : ControllerBase
     {
         private readonly IEventoService _eventosService;
+        private readonly IWebHostEnvironment _hostEnvironment;
 
-        public EventosController(IEventoService eventosService)
+        public EventosController(IEventoService eventosService, IWebHostEnvironment hostEnvironment)
         {
             _eventosService = eventosService;
+            _hostEnvironment = hostEnvironment;
         }
 
         [HttpGet]
@@ -70,6 +74,31 @@ namespace ProEventos.API.Controllers
             }
         }
 
+        [HttpPost("upload-image/{EventoId}")]
+        public async Task<IActionResult> UploadImage(int eventoId)
+        {
+            try
+            {
+                var evento = await _eventosService.GetEventoByIdAsync(eventoId, true);                
+                if (evento == null) return NoContent();
+
+                var file = Request.Form.Files[0];// Esse "Request" é o mesmo request que chega pelo [HttpPost("upload-image/{EventoId}")]
+                if (file.Length > 0)
+                {
+                    DeleteImage(evento.ImagemURL);
+                    evento.ImagemURL = await SaveImage(file);
+                }
+                var eventoRetorno = await _eventosService.UpdateEventos(eventoId, evento);
+
+                return Ok(eventoRetorno);
+            }
+            catch (Exception ex)
+            {
+                return this.StatusCode(StatusCodes.Status500InternalServerError,
+                    $"Post: Erro ao tentar adicionar eventos. Erro: {ex.Message}");
+            }
+        }
+
         [HttpPost]
         public async Task<IActionResult> Post(EventoDto model)
         {
@@ -109,6 +138,9 @@ namespace ProEventos.API.Controllers
         {
             try
             {
+                var evento = await _eventosService.GetEventoByIdAsync(id, true);
+                if (evento == null) return NoContent();
+
                 return await _eventosService.DeleteEvento(id) 
                        ? Ok(new {message ="Deletado"}) 
                        : BadRequest("Evento não deletado");
@@ -118,6 +150,38 @@ namespace ProEventos.API.Controllers
                 return this.StatusCode(StatusCodes.Status500InternalServerError,
                     $"Delete: Erro ao tentar deletar eventos. Erro: {ex.Message}");
             }
+        }
+
+
+        [NonAction]// [NonAction] Não é um endpoint, não pode ser acesso de fora, pelo link
+
+        public async Task<string> SaveImage(IFormFile imageFile)
+        {
+            string imageName = new String(Path.GetFileNameWithoutExtension(imageFile.FileName)
+                                              .Take(10) // pega somente os 10 primeiros caracteres do nome da imagem/arquivo.
+                                              .ToArray()
+                                              ).Replace(' ', '-');
+
+            imageName = $"{imageName}{DateTime.UtcNow.ToString("yymmssfff")}{Path.GetExtension(imageFile.FileName)}";
+
+            var imagePath = Path.Combine(_hostEnvironment.ContentRootPath, @"Resources/Images", imageName);
+
+            using (var fileStream = new FileStream(imagePath, FileMode.Create))
+            {
+                await imageFile.CopyToAsync(fileStream);
+            }
+
+            return imageName;
+        }
+
+        [NonAction]// [NonAction] Não é um endpoint, não pode ser acesso de fora, pelo link
+
+        public void DeleteImage(string imageName)
+        {
+            var imagePath = Path.Combine(_hostEnvironment.ContentRootPath, @"Resources/Images", imageName);
+            if (System.IO.File.Exists(imagePath))
+                System.IO.File.Delete(imagePath);
+
         }
     }
 }
