@@ -12,6 +12,7 @@ import { Evento } from '@app/models/Evento';
 import { Lote } from '@app/models/Lote';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { environment } from '@environments/environment';
 
 @Component({
   selector: 'app-evento-detalhe',
@@ -62,30 +63,49 @@ constructor(private fb: FormBuilder,
             this.localeService.use('pt-br');
 }
 
-public carregarEvento(): void{
+public carregarEvento(): void {
   this.eventoId = +this.activatedRouter.snapshot.paramMap.get('id');
 
-  if (this.eventoId != null && this.eventoId != 0){
+  if (this.eventoId !== null && this.eventoId !== 0) {
     this.spinner.show();
 
     this.estadoSalvar = 'put';
 
-    this.eventoService.getEventoById(this.eventoId).subscribe({
-      next:(evento: Evento) => {
-        this.evento ={...evento};
-        this.form.patchValue(this.evento);
-        this.evento.lotes.forEach(lote => {
+    this.eventoService
+      .getEventoById(this.eventoId)
+      .subscribe(
+        (evento: Evento) => {
+          this.evento = { ...evento };
+          this.form.patchValue(this.evento);
+          if (this.evento.imagemURL !== '') {
+            this.imagemURL = environment.apiURL + 'resources/images/' + this.evento.imagemURL;
+          }
+          this.carregarLotes();
+        },
+        (error: any) => {
+          this.toastr.error('Erro ao tentar carregar Evento.', 'Erro!');
+          console.error(error);
+        }
+      )
+      .add(() => this.spinner.hide());
+  }
+}
+
+public carregarLotes(): void {
+  this.loteService
+    .getLotesByEventoId(this.eventoId)
+    .subscribe(
+      (lotesRetorno: Lote[]) => {
+        lotesRetorno.forEach((lote) => {
           this.lotes.push(this.criarLote(lote));
         });
       },
-      error:(error: any) => {
-        this.spinner.hide();
-        this.toastr.error('Erro ao tentar carregar Evento.','Erro!');
+      (error: any) => {
+        this.toastr.error('Erro ao tentar carregar lotes', 'Erro');
         console.error(error);
-      },
-      complete:() => this.spinner.hide(),
-    });
-  }
+      }
+    )
+    .add(() => this.spinner.hide());
 }
 
   ngOnInit(): void {
@@ -101,7 +121,7 @@ public carregarEvento(): void{
       qtdPessoas: ['', [Validators.required, Validators.max(120000)]],
       telefone: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
-      imagemURL:['', Validators.required],
+      imagemURL:[''],
       lotes: this.fb.array([])
     });
   }

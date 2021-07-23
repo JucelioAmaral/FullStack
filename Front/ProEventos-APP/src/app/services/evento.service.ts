@@ -3,12 +3,13 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Evento } from '../models/Evento';
 import {take} from 'rxjs/operators';
+import { environment } from '@environments/environment';
 
 @Injectable(
   //{providedIn: 'root'}.OBS:Essa injeção de dependencia já existe no arquivo "app.module.ts". Está aqui como exemplo de que pode ser inserida aqui tbm. Nos dois arquivos, juntos ou um lá e aqui, não influencia, tanto faz.
 )
 export class EventoService {
-    baseURL = 'https://localhost:5001/api/Eventos';
+    baseURL = environment.apiURL + 'api/Eventos';
     constructor(private Http: HttpClient) { }
 
     public getEventos(): Observable<Evento[]>{
