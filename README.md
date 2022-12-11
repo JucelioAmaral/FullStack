@@ -3,7 +3,7 @@
 
 Api feita em .Net SDK 5.0.202, usando Entity framework para persistencia e acesso ao banco de dados,
 Swagger para documentação da Api, SQLServer como SGBD.
-Front-End utilizando Angular 12.
+Front-End utilizando Angular 12 e Node js 14.17.0
 
 ## Pré requisitos
  
@@ -31,6 +31,7 @@ git clone https://github.com/JucelioAmaral/FullStack.git
 ## Como executar o app (Front end)?
 
 1. Abrir o Console/Terminal do Visual Code e entrar no diretório do app;
-2. Instalar o Angular versão mais nova usando o comando: npm install -g @angular/cli;
-3. Execute ao comando: npm start ou ng serve;
-4. Acesso a página Angula: http://localhost:4200/
+2. Instalar o Angular versão mais nova usando o comando: npm install -g @angular/cli@12.0.4;
+3. Instalar o NVM (Node Version Manager), caso não tenha instalado o node: nvm install 14.17.0;
+4. Execute ao comando: npm start ou ng serve;
+5. Acesso a página Angula: http://localhost:4200/
